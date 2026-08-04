@@ -1,0 +1,125 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ke: <https://w3id.org/knowledge-engineering/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ke:OntologyShape
+    a sh:NodeShape ;
+    sh:targetClass owl:Ontology ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal
+    ] ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal
+    ] ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:minCount 1 ;
+        sh:class prov:Entity
+    ] .
+
+ke:GroundedKnowledgeShape
+    a sh:NodeShape ;
+    sh:targetClass skos:Concept, ke:Relation, ke:Axiom, ke:MentalModel ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal
+    ] ;
+    sh:property [
+        sh:path ke:confidence ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 1
+    ] ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:minCount 1 ;
+        sh:class ke:Evidence ;
+        sh:message "Every canonical knowledge object needs source evidence."
+    ] .
+
+ke:ConceptShape
+    a sh:NodeShape ;
+    sh:targetClass skos:Concept ;
+    sh:property [
+        sh:path skos:prefLabel ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 1
+    ] ;
+    sh:property [
+        sh:path skos:definition ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path skos:broader ;
+        sh:class skos:Concept
+    ] ;
+    sh:property [
+        sh:path skos:narrower ;
+        sh:class skos:Concept
+    ] ;
+    sh:property [
+        sh:path skos:related ;
+        sh:class skos:Concept
+    ] .
+
+ke:RelationShape
+    a sh:NodeShape ;
+    sh:targetClass ke:Relation ;
+    sh:class rdf:Statement ;
+    sh:property [ sh:path rdf:subject ; sh:minCount 1 ; sh:maxCount 1 ; sh:class skos:Concept ] ;
+    sh:property [ sh:path rdf:predicate ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path rdf:object ; sh:minCount 1 ; sh:maxCount 1 ; sh:class skos:Concept ] .
+
+ke:AxiomShape
+    a sh:NodeShape ;
+    sh:targetClass ke:Axiom ;
+    sh:property [ sh:path ke:statement ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path ke:modality ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path ke:epistemicStatus ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path ke:attribution ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+ke:MentalModelShape
+    a sh:NodeShape ;
+    sh:targetClass ke:MentalModel ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path ke:purpose ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+ke:EvidenceShape
+    a sh:NodeShape ;
+    sh:targetClass ke:Evidence ;
+    sh:class prov:Entity ;
+    sh:property [ sh:path ke:sourceId ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path ke:chunkId ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path ke:quote ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path ke:quoteSha256 ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 64 ; sh:maxLength 64 ] ;
+    sh:property [
+        sh:path ke:verified ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:hasValue true ;
+        sh:message "Canonical evidence must be verified."
+    ] ;
+    sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:class prov:Entity ] .
+
+ke:ConflictShape
+    a sh:NodeShape ;
+    sh:targetClass ke:ClaimConflict ;
+    sh:property [ sh:path ke:conflictingClaim ; sh:minCount 2 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path ke:resolution ; sh:minCount 1 ; sh:maxCount 1 ] .

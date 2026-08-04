@@ -1,0 +1,39 @@
+conversion:
+  backend: docling
+  ocr: auto
+  table_structure: accurate
+  export_markdown: true
+  export_docling_json: true
+  export_images: true
+
+chunking:
+  strategy: docling_hybrid
+  max_tokens: 1800
+  overlap_tokens: 150
+  preserve_headings: true
+  preserve_tables: true
+
+ontology:
+  strict_grounding: true
+  minimum_confidence: 0.55
+  reducer_batch_size: 8
+  entity_resolution:
+    lexical_threshold: 90
+    use_embeddings: false
+    llm_adjudicate_ambiguous_pairs: true
+  salience_budget:
+    terms: 250
+    relations: 400
+    axioms: 200
+    mental_models: 60
+
+synthesis:
+  objective_required: true
+  preserve_source_named_graphs: true
+  preserve_conflicts: true
+  critic_repairs: 1
+
+runtime:
+  require_citations: true
+  expose_hidden_deliberation: false
+
